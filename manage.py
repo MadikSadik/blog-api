@@ -2,9 +2,23 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+from pathlib import Path
+
+from decouple import Config, RepositoryEnv
+
+ENV_FILE = Path(__file__).resolve().parent / 'settings' / '.env'
+ENV_ID_KEY = 'BLOG_ENV_ID'
+DEFAULT_ENV_ID = 'local'
+SETTINGS_MODULES = {
+    'local': 'settings.env.local',
+    'prod': 'settings.env.prod',
+}
 
 
-def main():
+def main() -> None:
+    env_id = Config(RepositoryEnv(ENV_FILE))(ENV_ID_KEY, default=DEFAULT_ENV_ID)
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', SETTINGS_MODULES[env_id])
+    
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings.settings')
     try:
