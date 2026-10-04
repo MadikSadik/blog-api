@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-4ui$@1m!e4x8t7ltz)yp+^5xfn_dy)f7ps4rwzjfwz37ht4r&3'
+SECRET_KEY = conf.BLOG_SECRET_KEY
 
 
 ALLOWED_HOSTS = conf.BLOG_ALLOWED_HOSTS
