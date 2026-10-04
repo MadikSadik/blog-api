@@ -1,21 +1,18 @@
-from django.db import models
 from typing import Any
 
-from django.contrib.auth.models import (
-    AbstractBaseUser, 
-    BaseUserManager, 
-    PermissionsMixin
-    )
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.db import models
 
 from apps.auths.constants import (
     EMAIL_FIELD,
     FIRST_NAME_FIELD,
     FIRST_NAME_MAX_LENGTH,
-    LAST_NAME_FIELD,
-    LAST_NAME_MAX_LENGTH,
     IS_STAFF_FIELD,
     IS_SUPERUSER_FIELD,
+    LAST_NAME_FIELD,
+    LAST_NAME_MAX_LENGTH,
 )
+
 
 class UserManager(BaseUserManager):
     def create_user(self, email:str, password: str | None = None, **extra_fields: Any) -> 'User':
@@ -24,7 +21,12 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email: str, password: str | None = None, **extra_fields: Any) -> 'User':
+    def create_superuser(
+            self,
+            email: str,
+            password: str | None = None,
+            **extra_fields: Any
+            ) -> 'User':
         extra_fields.setdefault(IS_STAFF_FIELD, True)
         extra_fields.setdefault(IS_SUPERUSER_FIELD, True)
         return self.create_user(email, password, **extra_fields)

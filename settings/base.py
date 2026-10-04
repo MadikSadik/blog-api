@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
 from pathlib import Path
+
 from settings import conf
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -43,6 +44,12 @@ INSTALLED_APPS = [
 ]
 
 AUTH_USER_MODEL = 'auths.User'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHETIFICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentification',
+    ),
+}
 
 
 

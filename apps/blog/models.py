@@ -1,5 +1,5 @@
-from django.db import models
 from django.conf import settings
+from django.db import models
 
 from apps.blog.constants import (
     CATEGORY_NAME_MAX_LENGTH,
@@ -9,6 +9,7 @@ from apps.blog.constants import (
     STATUS_PUBLISHED,
     TAG_NAME_LENGTH,
 )
+
 
 class Category(models.Model):
     name = models.CharField(max_length=CATEGORY_NAME_MAX_LENGTH, unique=True)

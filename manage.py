@@ -18,7 +18,7 @@ SETTINGS_MODULES = {
 def main() -> None:
     env_id = Config(RepositoryEnv(ENV_FILE))(ENV_ID_KEY, default=DEFAULT_ENV_ID)
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', SETTINGS_MODULES[env_id])
-    
+
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings.settings')
     try:

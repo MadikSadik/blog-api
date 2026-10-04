@@ -1,0 +1,13 @@
+line-length = 100
+extend-exclude = ["**/migrations/*.py"]
+
+[lint]
+select = ["E", "F", "W", "I"]
+
+[lint.isort]
+section-order = ["future", "standard-library", "third-party", "drf", "django", "first-party", "local-folder"]
+known-first-party = ["apps", "settings"]
+
+[lint.isort.sections]
+drf = ["rest_framework", "rest_framework_simplejwt"]
+django = ["django"]
