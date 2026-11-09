@@ -69,3 +69,20 @@ SUMMARY_LABEL_WIDTH = 12
 SUMMARY_NUMBER_WIDTH = 5
 
 NO_PUBLISHED_POSTS_ERROR = 'Comments need at least one published post. Use --posts.'
+
+
+ENV_ID_LOCAL = 'local'
+ENV_LABEL_LOCAL = 'Local'
+ENV_LABEL_PROD = 'Production'
+ENV_COLOR_LOCAL = 'warning'
+ENV_COLOR_PROD = 'danger'
+
+STATUS_FILTER_PARAM = 'status__exact'
+
+COMMENT_BODY_PREVIEW_LENGTH = 60
+
+POST_FILTER_PARAM = 'post__id__exact'
+
+TOP_AUTHORS_LIMIT = 5
+PERCENT = 100
+CHART_BAR_COLOR = 'var(--color-primary-500)'

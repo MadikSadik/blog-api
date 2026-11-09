@@ -15,9 +15,15 @@ class Category(models.Model):
     name = models.CharField(max_length=CATEGORY_NAME_MAX_LENGTH, unique=True)
     slug = models.SlugField(unique=True)
 
+    def __str__(self) -> str:
+        return self.name
+
 class Tag(models.Model):
     name= models.CharField(max_length=TAG_NAME_LENGTH, unique=True)
     slug = models.SlugField(unique=True)
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class Post(models.Model):
@@ -39,9 +45,16 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self) -> str:
+        return self.title
+
+
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     body = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self) -> str:
+        return f'Comment #{self.pk}'

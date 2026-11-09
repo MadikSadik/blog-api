@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 
 from pathlib import Path
 
+from django.http import HttpRequest
+from django.urls import reverse, reverse_lazy
+
+from apps.blog.constants import STATUS_DRAFT, STATUS_FILTER_PARAM, STATUS_PUBLISHED
 from settings import conf
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -30,18 +34,26 @@ ALLOWED_HOSTS = conf.BLOG_ALLOWED_HOSTS
 
 # Application definition
 
-INSTALLED_APPS = [
+DJANGO_AND_THIRD_PARTY_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+]
 
+PROJECT_APPS = [
     'rest_framework',
     'apps.auths',
     'apps.blog',
+    'unfold',
+    'unfold.contrib.filters',
+    'unfold.contrib.forms',
 ]
+
+INSTALLED_APPS = PROJECT_APPS + DJANGO_AND_THIRD_PARTY_APPS
+
 
 AUTH_USER_MODEL = 'auths.User'
 
@@ -68,7 +80,7 @@ ROOT_URLCONF = 'settings.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -126,5 +138,135 @@ STATIC_URL = 'static/'
 MAILERS = {
     'default': {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
+    },
+}
+
+
+def published_tab_link(request: HttpRequest) -> str:
+    return f'{reverse("admin:blog_post_changelist")}?{STATUS_FILTER_PARAM}={STATUS_PUBLISHED}'
+
+
+def drafts_tab_link(request: HttpRequest) -> str:
+    return f'{reverse("admin:blog_post_changelist")}?{STATUS_FILTER_PARAM}={STATUS_DRAFT}'
+
+
+UNFOLD = {
+    'SITE_TITLE': 'Blog API',
+    'SITE_HEADER': 'Blog API',
+    'SITE_SUBHEADER': 'Admin panel',
+    'SITE_SYMBOL': 'article',
+    'DASHBOARD_CALLBACK': 'apps.blog.callbacks.dashboard_callback',
+    'ENVIRONMENT': 'apps.blog.callbacks.environment_callback',
+    'SITE_DROPDOWN': [
+        {
+            'icon': 'code',
+            'title': 'GitHub repository',
+            'link': 'https://github.com/MadikSadik/blog-api',
+        },
+        {
+            'icon': 'menu_book',
+            'title': 'Unfold docs',
+            'link': 'https://unfoldadmin.com/docs/',
+        },
+    ],
+    'COMMAND': {
+        'search_models': True,
+
+    },
+    'SIDEBAR': {
+    'show_search': True,
+    'show_all_applications': False,
+    'navigation': [
+        {
+            'title': 'Overview',
+            'separator': True,
+            'items': [
+                {
+                    'title': 'Dashboard',
+                    'icon': 'dashboard',
+                    'link': reverse_lazy('admin:index'),
+                },
+            ],
+        },
+        {
+            'title': 'Content',
+            'separator': True,
+            'items': [
+                {
+                    'title': 'Posts',
+                    'icon': 'article',
+                    'link': reverse_lazy('admin:blog_post_changelist'),
+                    'badge': 'apps.blog.callbacks.drafts_badge',
+                },
+                {
+                    'title': 'Comments',
+                    'icon': 'chat',
+                    'link': reverse_lazy('admin:blog_comment_changelist'),
+                },
+                {
+                    'title': 'Categories',
+                    'icon': 'category',
+                    'link': reverse_lazy('admin:blog_category_changelist'),
+                },
+                {
+                    'title': 'Tags',
+                    'icon': 'sell',
+                    'link': reverse_lazy('admin:blog_tag_changelist'),
+                },
+            ],
+        },
+        {
+            'title': 'Users & Access',
+            'separator': True,
+            'items': [
+                {
+                    'title': 'Users',
+                    'icon': 'person',
+                    'link': reverse_lazy('admin:auths_user_changelist'),
+                    'permission': 'apps.blog.callbacks.superuser_only',
+                },
+                {
+                    'title': 'Groups',
+                    'icon': 'group',
+                    'link': reverse_lazy('admin:auth_group_changelist'),
+                    'permission': 'apps.blog.callbacks.superuser_only',
+                },
+            ],
+        },
+    ],
+    },
+    'TABS': [
+    {
+        'models': ['blog.post'],
+        'items': [
+            {
+                'title': 'All',
+                'link': reverse_lazy('admin:blog_post_changelist'),
+            },
+            {
+                'title': 'Published',
+                'link': published_tab_link,
+            },
+            {
+                'title': 'Drafts',
+                'link': drafts_tab_link,
+            },
+        ],
+    },
+    ],
+    'COLORS': {
+        'primary': {
+            '50': 'oklch(97.9% 0.021 166.113)',
+            '100': 'oklch(95% 0.052 163.051)',
+            '200': 'oklch(90.5% 0.093 164.15)',
+            '300': 'oklch(84.5% 0.143 164.978)',
+            '400': 'oklch(76.5% 0.177 163.223)',
+            '500': 'oklch(69.6% 0.17 162.48)',
+            '600': 'oklch(59.6% 0.145 163.225)',
+            '700': 'oklch(50.8% 0.118 165.612)',
+            '800': 'oklch(43.2% 0.095 166.913)',
+            '900': 'oklch(37.8% 0.077 168.94)',
+            '950': 'oklch(26.2% 0.051 172.552)',
+        },
     },
 }
