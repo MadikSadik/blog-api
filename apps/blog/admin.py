@@ -90,6 +90,7 @@ class PostAdmin(ModelAdmin):
         ('author', AutocompleteSelectFilter),
         ('created_at', RangeDateTimeFilter),
     ]
+    list_filter_sheet = False
     list_filter_submit = True
     list_sections = [PostCommentsSection]
     search_fields = ('title', 'body', 'author__email')
