@@ -1,11 +1,13 @@
 import random
 import time
+from datetime import timedelta
 from typing import Any
 
 from faker import Faker
 
 from django.contrib.auth.hashers import make_password
 from django.core.management.base import BaseCommand, CommandError, CommandParser
+from django.utils import timezone
 from django.utils.text import slugify
 
 from apps.auths.models import User
@@ -14,16 +16,20 @@ from apps.blog.constants import (
     DEFAULT_COMMENTS,
     DEFAULT_POSTS,
     DEFAULT_USERS,
+    EDITED_POST_RATIO,
     INACTIVE_USER_RATIO,
     MAX_COMMENT_SENTENCES,
+    MAX_EDIT_DAYS,
     MAX_PARAGRAPHS,
     MAX_TAGS_PER_POST,
     MIN_COMMENT_SENTENCES,
+    MIN_EDIT_DAYS,
     MIN_PARAGRAPHS,
     NEGATIVE_NUMBER_ERROR,
     NO_CATEGORY_RATIO,
     NO_PUBLISHED_POSTS_ERROR,
     NO_USERS_ERROR,
+    POST_DAYS_RANGE,
     PUBLISHED_POST_RATIO,
     SEED_EMAIL_DOMAIN,
     SEED_PASSWORD,
@@ -185,6 +191,15 @@ class Command(BaseCommand):
         Post.objects.bulk_create(posts)
         for post, post_tags in zip(posts, posts_tags):
             post.tags.set(post_tags)
+
+        now = timezone.now()
+        for post in posts:
+            post.created_at = now - timedelta(days=random.uniform(0, POST_DAYS_RANGE))
+            post.updated_at = post.created_at
+            if random.random() < EDITED_POST_RATIO:
+                days = random.randint(MIN_EDIT_DAYS, MAX_EDIT_DAYS)
+                post.updated_at = min(post.created_at + timedelta(days=days), now)
+        Post.objects.bulk_update(posts, ['created_at', 'updated_at'])
         return len(posts)
 
     def create_comments(self, count: int) -> int:
@@ -204,4 +219,10 @@ class Command(BaseCommand):
             )
 
         Comment.objects.bulk_create(comments)
+
+        now = timezone.now()
+        for comment in comments:
+            created_at = comment.post.created_at
+            comment.created_at = created_at + (now - created_at) * random.random()
+        Comment.objects.bulk_update(comments, ['created_at'])
         return len(comments)
